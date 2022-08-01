@@ -13,8 +13,6 @@ option(ADHAN_WITH_TESTS "Build libadhan with tests" OFF)
 option(ADHAN_WITH_CMAKE "Build libadhan with cmake files" ON)
 option(ADHAN_WITH_PKGCONF "Build libadhan with pkgconf .pc files" ON)
 
-
-
 add_library(adhan)
 
 add_subdirectory(src)
@@ -86,7 +84,9 @@ if (ADHAN_WITH_CMAKE)
 endif(ADHAN_WITH_CMAKE)
 
 install(TARGETS adhan
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    OBJECTS DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 

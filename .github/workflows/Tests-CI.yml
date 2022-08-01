@@ -12,7 +12,36 @@ on:
       - "LICENSE"
 
 jobs:
-  windows:
+  windows-msvc:
+    runs-on: windows-latest
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    strategy:
+      fail-fast: false
+    matrix:
+      arch:
+        - amd64
+        - amd64_x86
+        - amd64_arm64
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.arch }}
+      - name: build and test
+        shell: pwsh
+        run: |
+          #run build and test
+          JOBS=20
+          export CTEST_PARALLEL_LEVEL=$JOBS
+          export CTEST_OUTPUT_ON_FAILURE=1
+          mkdir -p build
+          cd build
+          echo [cmake]: cmake .. $EVENT_CMAKE_OPTIONS
+          cmake .. -DADHAN_WITH_TESTS=on || (rm -rf * && cmake .. -DADHAN_WITH_TESTS=on)
+          cmake --build .
+          ./test/adhantest
+
+  windows-msys:
     runs-on: windows-latest
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     strategy:
