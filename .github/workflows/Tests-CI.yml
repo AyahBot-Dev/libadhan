@@ -1,0 +1,85 @@
+name: Tests-CI
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "LICENSE"
+  pull_request:
+    types: [opened, synchronize]
+    paths-ignore:
+      - "**.md"
+      - "LICENSE"
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler:
+          - GNU
+          - CLANG
+    steps:
+      - uses: actions/checkout@v2
+      - name: install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install clang-8
+      - name: build and test
+        shell: bash
+        run: |
+          if [ "${{ matrix.compiler }}" == "GNU" ]; then
+            export CC=gcc
+            export CXX=g++
+          else
+            export CC=clang
+            export CXX=clang++
+          fi
+          #run build and test
+          JOBS=20
+          export CTEST_PARALLEL_LEVEL=$JOBS
+          export CTEST_OUTPUT_ON_FAILURE=1
+          mkdir -p build
+          cd build
+          echo [cmake]: cmake .. $EVENT_CMAKE_OPTIONS
+          cmake .. -DADHAN_WITH_TESTS=on || (rm -rf * && cmake .. -DADHAN_WITH_TESTS=on)
+          cmake --build .
+          ./test/adhantest
+
+  macos:
+    runs-on: macos-latest
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    strategy:
+      fail-fast: false
+      matrix:
+        mem_check:
+          - ENABLE_VALGRIND
+          - ENABLE_SANITIZERS
+          - NONE_MEM_CHECK
+        compiler:
+          - GCC
+          - CLANG
+    steps:
+      - uses: actions/checkout@v2
+      - name: build and test
+        shell: bash
+        run: |
+          if [ "${{ matrix.compiler }}" == "GNU" ]; then
+            export CC=gcc
+            export CXX=g++
+          else
+            export CC=clang
+            export CXX=clang++
+          fi
+          #run build and test
+          JOBS=20
+          export CTEST_PARALLEL_LEVEL=$JOBS
+          export CTEST_OUTPUT_ON_FAILURE=1
+          mkdir -p build
+          cd build
+          cmake .. -DADHAN_WITH_TESTS=on || (rm -rf * && cmake .. -DADHAN_WITH_TESTS=on)
+          cmake --build .
+          ./test/adhantest
