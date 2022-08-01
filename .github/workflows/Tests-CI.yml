@@ -31,7 +31,7 @@ jobs:
         shell: pwsh
         run: |
           #run build and test
-          JOBS=20
+          $JOBS=20
           export CTEST_PARALLEL_LEVEL=$JOBS
           export CTEST_OUTPUT_ON_FAILURE=1
           mkdir -p build
