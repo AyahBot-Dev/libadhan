@@ -54,10 +54,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        mem_check:
-          - ENABLE_VALGRIND
-          - ENABLE_SANITIZERS
-          - NONE_MEM_CHECK
         compiler:
           - GCC
           - CLANG
