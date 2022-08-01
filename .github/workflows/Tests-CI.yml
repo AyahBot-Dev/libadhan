@@ -27,17 +27,15 @@ jobs:
     steps:
       - uses: msys2/setup-msys2@v2
         with:
+          msystem: MSYS
           update: true
           install: >-
             base-devel
             git
             cmake
       - uses: actions/checkout@v2
-      - name: install build dependencies
-        run: |
-
       - name: build and test
-        shell: bash
+        shell: msys2 {0}
         run: |
           if [ "${{ matrix.compiler }}" == "GNU" ]; then
             export CC=gcc
