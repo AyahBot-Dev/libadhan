@@ -31,6 +31,10 @@ jobs:
           update: true
           install: >-
             base-devel
+            gcc
+            g++
+            clang
+            clang++
             git
             cmake
       - uses: actions/checkout@v2
