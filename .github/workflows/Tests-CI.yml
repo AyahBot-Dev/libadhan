@@ -32,8 +32,8 @@ jobs:
         run: |
           #run build and test
           $JOBS=20
-          export CTEST_PARALLEL_LEVEL=$JOBS
-          export CTEST_OUTPUT_ON_FAILURE=1
+          set CTEST_PARALLEL_LEVEL=$JOBS
+          set CTEST_OUTPUT_ON_FAILURE=1
           mkdir -p build
           cd build
           echo [cmake]: cmake .. $EVENT_CMAKE_OPTIONS
